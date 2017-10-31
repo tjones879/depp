@@ -9,8 +9,8 @@ void printChildren(std::ostream &out, std::vector<T> children, std::string prefi
         out << prefix << "child: " << node << std::endl;
 }
 
-int ProgramNode::type() const {
-    return static_cast<int>(NodeType::PROGRAM);
+NodeType ProgramNode::type() const {
+    return (NodeType::PROGRAM);
 }
 
 void ProgramNode::print(std::ostream &out) const {
@@ -19,8 +19,8 @@ void ProgramNode::print(std::ostream &out) const {
     out << "end program" << std::endl;
 }
 
-int AtomsNode::type() const {
-    return static_cast<int>(NodeType::ATOMS);
+NodeType AtomsNode::type() const {
+    return (NodeType::ATOMS);
 }
 
 void AtomsNode::print(std::ostream &out) const {
@@ -29,8 +29,8 @@ void AtomsNode::print(std::ostream &out) const {
     out << "end atoms" << std::endl;
 }
 
-int ListNode::type() const {
-    return static_cast<int>(NodeType::LIST);
+NodeType ListNode::type() const {
+    return (NodeType::LIST);
 }
 
 void ListNode::print(std::ostream &out) const {
@@ -39,8 +39,8 @@ void ListNode::print(std::ostream &out) const {
     out << " )" << std::endl;
 }
 
-int VectorNode::type() const {
-    return static_cast<int>(NodeType::VECTOR);
+NodeType VectorNode::type() const {
+    return (NodeType::VECTOR);
 }
 
 void VectorNode::print(std::ostream &out) const {
@@ -49,8 +49,8 @@ void VectorNode::print(std::ostream &out) const {
     out << " ]" << std::endl;
 }
 
-int MapNode::type() const {
-    return static_cast<int>(NodeType::MAP);
+NodeType MapNode::type() const {
+    return (NodeType::MAP);
 }
 
 void MapNode::print(std::ostream &out) const {
@@ -64,8 +64,8 @@ LiteralNode::LiteralNode(LiteralType type, LiteralVariant literal) {
     this->literal = literal;
 }
 
-int LiteralNode::type() const {
-    return static_cast<int>(NodeType::LITERAL);
+NodeType LiteralNode::type() const {
+    return (NodeType::LITERAL);
 }
 
 void LiteralNode::print(std::ostream &out) const {

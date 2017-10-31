@@ -28,7 +28,7 @@ public:
     std::string operator() () { return converter(type); }
 };
 
-enum class NodeType: int {
+enum class NodeType : int {
     PROGRAM,
     ATOMS,
     LIST,
@@ -75,7 +75,7 @@ class Node {
 public:
     std::vector<std::shared_ptr<Node>> children;
 
-    virtual int type() const = 0;
+    virtual NodeType type() const = 0;
     virtual void print(std::ostream &out) const = 0;
     virtual ~Node() {};
 };
@@ -84,7 +84,7 @@ typedef std::shared_ptr<Node> NodePtr;
 
 class ProgramNode : public Node {
 public:
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
@@ -92,7 +92,7 @@ typedef std::shared_ptr<ProgramNode> ProgramNodePtr;
 
 class AtomsNode : public Node {
 public:
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
@@ -100,7 +100,7 @@ typedef std::shared_ptr<AtomsNode> AtomsNodePtr;
 
 class ListNode : public Node {
 public:
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
@@ -108,7 +108,7 @@ typedef std::shared_ptr<ListNode> ListNodePtr;
 
 class VectorNode : public Node {
 public:
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
@@ -116,7 +116,7 @@ typedef std::shared_ptr<VectorNode> VectorNodePtr;
 
 class MapNode : public Node {
 public:
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
@@ -127,7 +127,7 @@ public:
     LiteralType token_type;
     LiteralVariant literal;
     LiteralNode(LiteralType type, LiteralVariant literal);
-    int type() const;
+    NodeType type() const;
     void print(std::ostream &out) const;
 };
 
