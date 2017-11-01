@@ -1,5 +1,5 @@
 CXX = clang++
-CFLAGS = --std=c++17 -stdlib=libc++ -Wall -Wno-c++98-compat -Wno-global-constructors \
+CFLAGS = --std=c++17 -stdlib=libc++ -g -Wall -Wno-c++98-compat -Wno-global-constructors \
          -Wno-exit-time-destructors -Wno-zero-as-null-pointer-constant \
          -Wno-padded -Wno-unused-macros -o main  -Iinc/ -Igen/
 PROJ = lisp
@@ -15,7 +15,7 @@ dirs:
 	@if [ ! -d gen ] ; then mkdir gen; fi
 
 main: gen/lex.yy.cpp gen/tab.cpp $(SRC)ast.cpp
-	@$(CXX) $(CFLAGS) -o main gen/lex.yy.cpp gen/tab.cpp $(SRC)ast.cpp
+	@$(CXX) $(CFLAGS) -o main gen/lex.yy.cpp gen/tab.cpp $(SRC)ast.cpp $(SRC)env.cpp $(SRC)generator.cpp
 
 
 gen/lex.yy.cpp: $(SRC)$(PROJ).l
