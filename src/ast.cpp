@@ -1,7 +1,8 @@
 #include "ast.h"
 
-namespace ast
-{
+namespace ast {
+template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
 template <class T>
 void printChildren(std::ostream &out, std::vector<T> children, std::string prefix) {
@@ -70,7 +71,10 @@ NodeType LiteralNode::type() const {
 
 void LiteralNode::print(std::ostream &out) const {
     out << "literal type= " << static_cast<std::string>(literalTypeToStr()(token_type));
-    std::visit([&out](auto &arg) { out << ", literal val=" << arg << std::endl;}, literal);
+    std::visit(overloaded {
+                    [&out](const ListNode &arg) { out << ", literal list val="; arg.print(out); out << std::endl;},
+                    [&out](auto &arg) { out << ", literal val=" << arg << std::endl;}},
+               literal);
     printChildren(out, children, std::string("    literal"));
 }
 

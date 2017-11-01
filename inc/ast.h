@@ -9,7 +9,8 @@
 
 namespace ast
 {
-typedef std::variant<int, double, bool, std::string> LiteralVariant;
+class ListNode;
+typedef std::variant<int, double, bool, std::string, ListNode> LiteralVariant;
 
 template <class E>
 struct enumToString {
@@ -45,7 +46,8 @@ enum class LiteralType : int {
     INTEGER,
     IDENT,
     KEYWORD,
-    RESERVED
+    RESERVED,
+    LIST
 };
 
 struct literalTypeToStr : enumToString<LiteralType> {
@@ -67,6 +69,8 @@ struct literalTypeToStr : enumToString<LiteralType> {
                 return "KEYWORD";
             case LiteralType::RESERVED:
                 return "RESERVED";
+            case LiteralType::LIST:
+                return "LIST";
         }
     }
 };
