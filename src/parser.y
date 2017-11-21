@@ -3,6 +3,7 @@
 #include <string.h>
 #include <FlexLexer.h>
 #include "lisp.h"
+#include "generator.hpp"
 
 #define DEBUG_PARSER 0
 
@@ -179,9 +180,14 @@ void yyerror(const char *str)
 int main()
 {
     yyparse();
-    if (program)
-        std::cout << program;
-    else
+    if (program) {
+        std::cout << program << std::endl;
+        gen::ReservedHandler res(program);
+        res.generate();
+        res.dumpEnv(std::cout);
+        std::cout << program << std::endl;
+    } else {
         std::cout << "FAILURE: syntax error." << std::endl;
+    }
     return 0;
 }
