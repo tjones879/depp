@@ -1,8 +1,8 @@
 #ifndef GENERATOR_H
 #define GENERATOR_H
 
-#include "ast.h"
-#include "env.hpp"
+#include "inc/ast.h"
+#include "inc/env.hpp"
 
 namespace gen {
 

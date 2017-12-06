@@ -2,8 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <FlexLexer.h>
-#include "lisp.h"
-#include "generator.hpp"
+#include "inc/lisp.h"
+#include "inc/generator.hpp"
 
 #define DEBUG_PARSER 0
 

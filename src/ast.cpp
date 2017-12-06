@@ -1,4 +1,4 @@
-#include "ast.h"
+#include "inc/ast.h"
 
 namespace ast {
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };

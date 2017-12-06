@@ -1,7 +1,7 @@
 #ifndef ENV_H
 #define ENV_H
 
-#include "ast.h"
+#include "inc/ast.h"
 #include <unordered_map>
 #include <string>
 
@@ -17,6 +17,21 @@ public:
     }
 };
 
+class Value {
+    std::string name;
+};
+/*
+template <std::vector<Value> kwargs, typename retType>
+class Functor {
+    std::function<retType()> func;
+public:
+    Functor(std::function<retType()> f) : func(f) {}
+    retType operator()(Value args...) {
+
+    }
+};
+*/
+
 class Environment {
     Environment *parent;
     std::unordered_map<std::string, Symbol> symbols;
@@ -30,6 +45,7 @@ public:
 };
 
 typedef std::shared_ptr<Environment> EnvironmentPtr;
+typedef std::shared_ptr<const Environment> SafeEnv;
 
 }
 

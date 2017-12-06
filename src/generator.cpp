@@ -1,4 +1,4 @@
-#include "generator.hpp"
+#include "inc/generator.hpp"
 #include <iostream>
 #include <memory>
 #include <vector>
@@ -69,12 +69,12 @@ namespace gen {
             auto next = parent->children.at(position + 1);
             if (next->type() != ast::NodeType::LIST)
                 throw std::invalid_argument("Element following quote must be a list");
-            parent->children[position + 1] = ast::node(ast::LiteralType::LIST, *std::dynamic_pointer_cast<ast::ListNode>(next).get());
+            parent->children[position + 1] = ast::node(ast::LiteralType::LIST,
+                                                       *std::dynamic_pointer_cast<ast::ListNode>(next).get());
         } catch (const std::out_of_range &e) {
             std::cerr << e.what() << std::endl;
         } catch (const std::invalid_argument &e) {
             std::cerr << e.what() << std::endl;
         }
     }
-
 }
