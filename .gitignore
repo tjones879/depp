@@ -1,5 +1,9 @@
 gen/
 CMakeCache.txt
 CMakeFiles/
-cmake_install.cmake
+*.cmake
 Makefile
+Test
+run
+Testing/
+src/*.a
