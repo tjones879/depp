@@ -20,17 +20,6 @@ public:
 class Value {
     std::string name;
 };
-/*
-template <std::vector<Value> kwargs, typename retType>
-class Functor {
-    std::function<retType()> func;
-public:
-    Functor(std::function<retType()> f) : func(f) {}
-    retType operator()(Value args...) {
-
-    }
-};
-*/
 
 class Environment {
     Environment *parent;
