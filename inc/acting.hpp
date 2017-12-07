@@ -10,6 +10,8 @@
 namespace acting {
 using namespace caf;
 
+struct ActorState;
+
 class FakeEnv {
 public:
     env::SafeEnv env;
@@ -37,8 +39,10 @@ typename Inspector::result_type inspect(Inspector &f, ResultMsg &x) {
     return f(meta::type_name("ResultMessage"));
 }
 
-using cell = typed_actor<replies_to<StartMsg>::with<ResultMsg>>;
+using list = typed_actor<replies_to<StartMsg>::with<ResultMsg>>;
+using vector = typed_actor<replies_to<StartMsg>::with<ResultMsg>>;
 
-cell::behavior_type cellActor(cell::pointer self);
+vector::behavior_type vectorActor(vector::pointer self);
+list::behavior_type listActor(list::stateful_pointer<ActorState> self);
 }
 #endif
