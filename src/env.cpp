@@ -2,6 +2,11 @@
 
 namespace env {
 
+template <class F>
+ast::LiteralNode Applicable<F>::apply(std::vector<ast::LiteralNode> &deps) {
+    return method(deps);
+}
+
 Environment::Environment() {
     parent = nullptr;
 }

@@ -17,6 +17,14 @@ public:
     }
 };
 
+template <class F>
+class Applicable : public Symbol {
+    F method;
+public:
+    Applicable(ast::NodePtr node, F func) : Symbol(node), method(func) { }
+    ast::LiteralNode apply(std::vector<ast::LiteralNode> &deps);
+};
+
 class Value {
     std::string name;
 };
