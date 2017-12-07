@@ -265,4 +265,18 @@ ast::LiteralNode proc_div(std::vector<ast::LiteralNode> &deps)
         throw TypeMismatchException();
     }
 }
+
+ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps) {
+    if (deps.size() < 1)
+        throw ArgLengthException();
+
+    return deps[0];
+}
+
+std::vector<ast::LiteralNode> proc_cdr(std::vector<ast::LiteralNode> &deps) {
+    if (deps.size() < 1)
+        throw ArgLengthException();
+
+    return std::vector<ast::LiteralNode>(deps.begin() + 1, deps.end());
+}
 }; // namespace depp

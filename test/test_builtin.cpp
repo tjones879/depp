@@ -205,4 +205,36 @@ go_bandit([]() {
         });
     });
 
+    describe("proc_car", []() {
+        std::vector<ast::LiteralNode> vec;
+        before_each([&]() {
+            vec = std::vector<ast::LiteralNode>();
+        });
+
+        it("should return first", [&]() {
+            double a = 1.5;
+            auto first = ast::LiteralNode(ast::LiteralType::REAL, a);
+            vec.push_back(first);
+            vec.push_back(ast::LiteralNode(ast::LiteralType::REAL, 2.5));
+            AssertThat(
+                std::get<double>(depp::proc_car(vec).literal),
+                Equals(a));
+        });
+    });
+
+    describe("proc_cdr", []() {
+        std::vector<ast::LiteralNode> vec;
+        before_each([&]() {
+            vec = std::vector<ast::LiteralNode>();
+        });
+
+        it("should return rest", [&]() {
+            double a = 11.5;
+            vec.push_back(ast::LiteralNode(ast::LiteralType::REAL, 0.0));
+            vec.push_back(ast::LiteralNode(ast::LiteralType::REAL, a));
+            AssertThat(
+                std::get<double>(depp::proc_cdr(vec)[0].literal),
+                Equals(a));
+        });
+    });
 });
