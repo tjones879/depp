@@ -106,6 +106,8 @@ class ListNode : public Node {
 public:
     NodeType type() const;
     void print(std::ostream &out) const;
+    bool operator==(const ListNode &other) const;
+    bool operator!=(const ListNode &other) const;
 };
 
 typedef std::shared_ptr<ListNode> ListNodePtr;

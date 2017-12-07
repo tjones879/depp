@@ -12,6 +12,8 @@ ast::LiteralNode proc_mult(std::vector<ast::LiteralNode> &deps);
 ast::LiteralNode proc_div(std::vector<ast::LiteralNode> &deps);
 ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps);
 std::vector<ast::LiteralNode> proc_cdr(std::vector<ast::LiteralNode> &deps);
+ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps);
+ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps);
 
 }
 

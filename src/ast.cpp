@@ -34,6 +34,19 @@ NodeType ListNode::type() const {
     return (NodeType::LIST);
 }
 
+bool ListNode::operator==(const ListNode &other) const {
+    if (other.children.size() != children.size())
+        return false;
+    for (auto i = 0; i < children.size(); i++)
+        if (other.children[i] != children[i])
+            return false;
+    return true;
+}
+
+bool ListNode::operator!=(const ListNode &other) const {
+    return !(*this == other);
+}
+
 void ListNode::print(std::ostream &out) const {
     out << "list (" << std::endl;
     printChildren(out, children, std::string("    list"));

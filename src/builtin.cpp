@@ -37,8 +37,14 @@ auto compose(F f, Fs&&... fs) {
 }
 
 template <class T, class C>
-auto foldLiterals(const std::vector<T> &deps, C composition) {
+auto foldLiterals(const std::vector<ast::LiteralNode> &deps, C composition) {
+    ast::LiteralNode result = ast::LiteralNode(ast::LiteralType::NIL, false);
+    std::for_each(deps.begin(), deps.end(),
+            [&](ast::LiteralNode &in) {
+                result = C(in);
+            });
 
+    return result;
 }
 
 ast::LiteralVariant addInt(ast::LiteralVariant &sum, int term) {
@@ -278,5 +284,29 @@ std::vector<ast::LiteralNode> proc_cdr(std::vector<ast::LiteralNode> &deps) {
         throw ArgLengthException();
 
     return std::vector<ast::LiteralNode>(deps.begin() + 1, deps.end());
+}
+
+ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
+    auto first = deps.begin()->literal;
+    bool eq = std::all_of(deps.begin() + 1, deps.end(),
+                [&](ast::LiteralNode &in) -> bool {
+                    return std::visit([&](auto &arg) -> bool {
+                        using T = std::decay_t<decltype(arg)>;
+
+                        if (!std::holds_alternative<T>(first)) {
+                            return false;
+                        } else {
+                            if (std::get<T>(first) != arg)
+                                return false;
+                        }
+                        return true;
+                    }, in.literal);
+                });
+    return ast::LiteralNode(ast::LiteralType::BOOL, eq);
+}
+
+ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps) {
+    bool null = deps.size() < 1;
+    return ast::LiteralNode(ast::LiteralType::BOOL, null);
 }
 }; // namespace depp

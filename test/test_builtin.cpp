@@ -237,4 +237,54 @@ go_bandit([]() {
                 Equals(a));
         });
     });
+
+    describe("proc_eq", []() {
+        std::vector<ast::LiteralNode> vec;
+        before_each([&]() {
+            vec = std::vector<ast::LiteralNode>();
+        });
+
+        it("should fail diff types", [&]() {
+            vec.push_back(ast::LiteralNode(ast::LiteralType::REAL, 0.0));
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 0));
+            AssertThat(
+                    std::get<bool>(depp::proc_eq(vec).literal),
+                    Equals(false));
+        });
+        it("should fail different values", [&]() {
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 1));
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 0));
+            AssertThat(
+                    std::get<bool>(depp::proc_eq(vec).literal),
+                    Equals(false));
+        });
+
+        it("should pass same values", [&]() {
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 5));
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 5));
+            AssertThat(
+                    std::get<bool>(depp::proc_eq(vec).literal),
+                    Equals(true));
+        });
+    });
+
+    describe("proc_null", []() {
+        std::vector<ast::LiteralNode> vec;
+        before_each([&]() {
+            vec = std::vector<ast::LiteralNode>();
+        });
+
+        it("should pass empty", [&]() {
+            AssertThat(
+                    std::get<bool>(depp::proc_null(vec).literal),
+                    Equals(true));
+        });
+
+        it("should fail non-empty", [&]() {
+            vec.push_back(ast::LiteralNode(ast::LiteralType::INTEGER, 5));
+            AssertThat(
+                    std::get<bool>(depp::proc_null(vec).literal),
+                    Equals(false));
+        });
+    });
 });
