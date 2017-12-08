@@ -9,5 +9,6 @@ set(CMAKE_CXX_FLAGS "--std=c++17 -stdlib=libc++ -g -Wall -Wno-c++98-compat -Wno-
          -Wno-padded -Wno-unused-macros")
 
 include_directories(${CMAKE_SOURCE_DIR}/)
+include_directories(${CMAKE_SOURCE_DIR}/gen/)
 add_subdirectory(src)
 add_subdirectory(test)
