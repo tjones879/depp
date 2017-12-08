@@ -1,67 +1,36 @@
 #include "inc/acting.hpp"
 #include <stack>
 #include <utility>
+#include <chrono>
 
-/*
+namespace acting {
+
 vector::behavior_type vectorActor(vector::pointer self) {
-    auto handle_err = [=](const error &err) {
-        aout(self) << "FAILURE" << std::endl;
-    };
     return {
         [=](StartMsg b) -> ResultMsg {
-            auto deps = std::stack<ast::LiteralNode>();
-            for (auto child : b.subtree->children) {
-                //TODO: COMPLETE THIS CHILD
-                //deps.push(<RESULT OF CHILD>);
-            }
-            // TODO: COMPLETE THIS COMMAND
-            
+            aout(self) << "TEST" << std::endl;
+            return ResultMsg{10};
         }
     };
 }
 
-list::behavior_type listActor(list::stateful_pointer<ActorState> self) {
-    auto handle_err = [=](const error &err) {
+template <class Handle, class Task>
+void tester(scoped_actor &self, const Handle& hdl, Task t) {
+    auto handle_err = [&](const error &err) {
         aout(self) << "FAILURE" << std::endl;
     };
-    return {
-        [=](StartMsg b) -> ResultMsg {
-            self->state.children = 0;
-            self->state.deps = std::vector<ResultMsg>(b.subtree->children.size());
-            for (auto i = 1; i < b.subtree->children.size(); i++) {
-                auto &child = b.subtree->children[i];
-                if (child->type() != ast::NodeType::LITERAL) {
-                    StartMsg msg{nullptr, child};
-                    // Construct a fakeEnv
-
-                    // If the node is a list node, spawn a list actor
-                    if (child->type() == ast::NodeType::LIST) {
-                        auto actor = self->system().spawn(listActor);
-                        self->request(actor, infinite, msg).await(
-                            [=](ResultMsg result) {
-                                self->state.deps[i] = result;
-                                // We want to see if we have completed all dependencies
-                                if (self->state.deps.size() == self->state.children) {
-                                    // TODO EXECUTE THE CURRENT COMMAND
-                                }
-                            }, handle_err);
-                    } else if (child->type() == ast::NodeType::VECTOR) {
-                        auto actor = self->system().spawn(vectorActor);
-                        self->request(actor, infinite, msg).await(
-                            [=](ResultMsg result) {
-                                self->state.deps[i] = result;
-                                // We want to see if we have completed all dependencies
-                                if (self->state.deps.size() == self->state.children) {
-                                    // TODO EXECUTE THE CURRENT COMMAND
-                                }
-                            }, handle_err);
-                    }
-                } else {
-                    auto literalnode = std::dynamic_pointer_cast<ast::LiteralNode>(child);
-                    self->state.deps[i] = ResultMsg{literalnode, literalnode->literal};
-                }
-            }
-        }
-    };
+    self->request(hdl, infinite, t).receive(
+        [&](ResultMsg ans) {
+            aout(self) << "SUCCESS" << std::endl;
+        }, handle_err);
 }
-*/
+
+void startActing() {
+    actor_system_config cfg;
+    actor_system system{cfg};
+    scoped_actor main{system};
+    StartMsg t{1};
+    auto actor = system.spawn(vectorActor);
+    tester(main, actor, t);
+}
+}
