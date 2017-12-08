@@ -2,13 +2,8 @@
 
 namespace env {
 
-template <class F>
-ast::LiteralNode Applicable<F>::apply(std::vector<ast::LiteralNode> &deps) {
+ast::LiteralNode Applicable::apply(std::vector<ast::LiteralNode> &deps) const {
     return method(deps);
-}
-
-Environment::Environment() {
-    parent = nullptr;
 }
 
 void Environment::addSymbol(std::string key, Symbol symbol) {
@@ -16,8 +11,8 @@ void Environment::addSymbol(std::string key, Symbol symbol) {
         symbols[key] = symbol;
 }
 
-const Environment *Environment::findSymbol(const std::string &key) {
-    Environment *ret = nullptr, *env = this;
+const Environment *Environment::findSymbol(const std::string &key) const {
+    const Environment *ret = nullptr, *env = this;
     do {
         if (env->symbols.find(key) != symbols.end())
             ret = env;
@@ -27,12 +22,12 @@ const Environment *Environment::findSymbol(const std::string &key) {
     return ret;
 }
 
-const Symbol &Environment::getSymbol(const std::string &key) {
+const Symbol &Environment::getSymbol(const std::string &key) const {
     const Environment *env = findSymbol(key);
     return env->symbols.at(key);
 }
 
-void Environment::print(std::ostream &out) {
+void Environment::print(std::ostream &out) const {
     for (auto symbol : symbols)
         std::get<1>(symbol).print(out);
 }

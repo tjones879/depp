@@ -17,12 +17,14 @@ public:
     }
 };
 
-template <class F>
 class Applicable : public Symbol {
-    F method;
+    using funcType = std::function<ast::LiteralNode(std::vector<ast::LiteralNode> &)>;
+    funcType method;
 public:
-    Applicable(ast::NodePtr node, F func) : Symbol(node), method(func) { }
-    ast::LiteralNode apply(std::vector<ast::LiteralNode> &deps);
+    Applicable(funcType func) : Symbol(nullptr) { 
+        method = func;
+    }
+    ast::LiteralNode apply(std::vector<ast::LiteralNode> &deps) const;
 };
 
 class Value {
@@ -33,12 +35,12 @@ class Environment {
     Environment *parent;
     std::unordered_map<std::string, Symbol> symbols;
 public:
-    Environment();
+    Environment() : parent(nullptr) {}
     Environment(Environment *outer) : parent(outer) {}
     void addSymbol(std::string key, Symbol symbol);
-    const Environment *findSymbol(const std::string &key);
-    const Symbol &getSymbol(const std::string &key);
-    void print(std::ostream &out);
+    const Environment *findSymbol(const std::string &key) const;
+    const Symbol &getSymbol(const std::string &key) const;
+    void print(std::ostream &out) const;
 };
 
 typedef std::shared_ptr<Environment> EnvironmentPtr;

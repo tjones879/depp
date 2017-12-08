@@ -3,6 +3,9 @@
 #include <string.h>
 #include <FlexLexer.h>
 #include "inc/lisp.h"
+#include "inc/env.hpp"
+#include "inc/acting.hpp"
+#include "inc/builtin.hpp"
 #include "inc/generator.hpp"
 
 #define DEBUG_PARSER 0
@@ -177,14 +180,24 @@ void yyerror(const char *str)
     fprintf(stderr, "error %s\n", str);
 }
 
+env::SafeEnv buildGlobalEnv()
+{
+    auto global = std::make_shared<env::Environment>();
+    global->addSymbol("+", env::Applicable(depp::proc_add));
+    global->addSymbol("-", env::Applicable(depp::proc_sub));
+    return global;
+}
+
 int main()
 {
     yyparse();
     if (program) {
         std::cout << program << std::endl;
+        auto env = buildGlobalEnv();
         gen::ReservedHandler res(program);
         res.generate();
         res.dumpEnv(std::cout);
+        acting::startActing(program, env);
         std::cout << program << std::endl;
     } else {
         std::cout << "FAILURE: syntax error." << std::endl;
