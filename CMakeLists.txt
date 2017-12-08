@@ -10,4 +10,4 @@ set(CMAKE_CXX_FLAGS "--std=c++17 -stdlib=libc++ -g -Wall -Wno-c++98-compat -Wno-
 
 include_directories(${CMAKE_SOURCE_DIR}/)
 add_subdirectory(src)
-add_subdirectory(test)
+#add_subdirectory(test)

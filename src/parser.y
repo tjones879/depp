@@ -4,7 +4,7 @@
 #include <FlexLexer.h>
 #include "inc/lisp.h"
 #include "inc/env.hpp"
-#include "inc/acting.hpp"
+//#include "inc/acting.hpp"
 #include "inc/builtin.hpp"
 #include "inc/generator.hpp"
 
@@ -197,7 +197,7 @@ int main()
         gen::ReservedHandler res(program);
         res.generate();
         res.dumpEnv(std::cout);
-        acting::startActing(program, env);
+        //startActing(program, env);
         std::cout << program << std::endl;
     } else {
         std::cout << "FAILURE: syntax error." << std::endl;

@@ -2,7 +2,6 @@
 #include <stack>
 #include <utility>
 
-namespace acting {
 /*
 vector::behavior_type vectorActor(vector::pointer self) {
     auto handle_err = [=](const error &err) {
@@ -80,5 +79,4 @@ void startActing(ast::NodePtr root, env::SafeEnv global) {
     scoped_actor main{system};
     StartMsg start{1};
     auto root_actor = system.spawn(listActor);
-}
 }

@@ -8,15 +8,15 @@ FLEX_TARGET(MyScanner ${CMAKE_SOURCE_DIR}/src/scanner.l ${CMAKE_SOURCE_DIR}/gen/
 
 find_package(CAF COMPONENTS core REQUIRED)
 include_directories(${CAF_INCLUDE_DIRS})
+include_directories(${CMAKE_SOURCE_DIR}/gen)
 
-add_library(depp
+add_executable(depp
     ${FLEX_MyScanner_OUTPUTS}
     ${SRC_DIR}/acting.cpp
     ${SRC_DIR}/ast.cpp
     ${SRC_DIR}/builtin.cpp
     ${SRC_DIR}/env.cpp
-    ${SRC_DIR}/generator.cpp)
-
-add_executable(run
+    ${SRC_DIR}/generator.cpp
     ${BISON_MyParser_OUTPUTS})
-target_link_libraries(run caf_core depp)
+
+target_link_libraries(depp caf_core)

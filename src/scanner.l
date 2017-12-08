@@ -6,7 +6,7 @@
 #include <math.h>
 
 #include "inc/lisp.h"
-#include "tab.hpp"
+#include "parser.hpp"
 
 #define DEBUG_SCANNER 0
 %}

@@ -8,7 +8,6 @@
 #include "caf/all.hpp"
 #include "caf/io/all.hpp"
 
-namespace acting {
 using namespace caf;
 
 class FakeEnv {
@@ -59,5 +58,4 @@ vector::behavior_type vectorActor(vector::pointer self);
 list::behavior_type listActor(list::stateful_pointer<ActorState> self);
 
 void startActing(ast::NodePtr root, env::SafeEnv global);
-}
 #endif
