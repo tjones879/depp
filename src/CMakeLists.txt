@@ -10,7 +10,7 @@ find_package(CAF COMPONENTS core REQUIRED)
 include_directories(${CAF_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/gen)
 
-add_executable(depp
+add_library(depp
     ${FLEX_MyScanner_OUTPUTS}
     ${SRC_DIR}/acting.cpp
     ${SRC_DIR}/ast.cpp
@@ -19,4 +19,5 @@ add_executable(depp
     ${SRC_DIR}/generator.cpp
     ${BISON_MyParser_OUTPUTS})
 
-target_link_libraries(depp caf_core)
+add_executable(run main.cpp)
+target_link_libraries(run caf_core depp)

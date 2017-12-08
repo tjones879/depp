@@ -65,18 +65,3 @@ list::behavior_type listActor(list::stateful_pointer<ActorState> self) {
     };
 }
 */
-list::behavior_type listActor(list::stateful_pointer<ActorState> self) {
-    return {
-        [=](StartMsg b) -> ResultMsg {
-            aout(self) << "Hi" << std::endl;
-            return ResultMsg{5};
-        }
-    };
-}
-void startActing(ast::NodePtr root, env::SafeEnv global) {
-    actor_system_config cfg;
-    actor_system system{cfg};
-    scoped_actor main{system};
-    StartMsg start{1};
-    auto root_actor = system.spawn(listActor);
-}

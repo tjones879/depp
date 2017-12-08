@@ -35,7 +35,7 @@ struct ActorState {
     int child;
 };
 
-
+/*
 template <class Inspector>
 typename Inspector::result_type inspect(Inspector &f, StartMsg &x) {
     return f(meta::type_name("StartMessage"), x.a);
@@ -56,6 +56,6 @@ using vector = typed_actor<replies_to<StartMsg>::with<ResultMsg>>;
 
 vector::behavior_type vectorActor(vector::pointer self);
 list::behavior_type listActor(list::stateful_pointer<ActorState> self);
-
 void startActing(ast::NodePtr root, env::SafeEnv global);
+*/
 #endif
