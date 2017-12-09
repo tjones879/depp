@@ -1,5 +1,6 @@
 #include "inc/builtin.hpp"
 #include "inc/ast.h"
+#include "inc/env.hpp"
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -308,5 +309,18 @@ ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps) {
     bool null = deps.size() < 1;
     return ast::LiteralNode(ast::LiteralType::BOOL, null);
+}
+
+ast::LiteralNode proc_quote(ast::ListNode &list) {
+    return ast::LiteralNode(ast::LiteralType::LIST, list);
+}
+
+void proc_def(std::shared_ptr<env::Environment> enviro, std::vector<ast::LiteralNodePtr> &deps) {
+    if (deps.size() == 2) {
+        if (deps[0]->token_type != ast::LiteralType::IDENT)
+            throw TypeMismatchException();
+        auto tok = std::get<std::string>(deps[0]->literal);
+        enviro->addSymbol(tok, std::make_shared<env::Symbol>(deps[1], env::SymbolType::CONST));
+    }
 }
 }; // namespace depp

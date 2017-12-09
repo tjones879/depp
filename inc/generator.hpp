@@ -12,13 +12,8 @@ struct Generator {
     Generator(const ast::NodePtr ptr);
     Generator(env::EnvironmentPtr en, const ast::NodePtr &ptr);
     void dumpEnv(std::ostream &out);
-    virtual void generate()=0;
-};
-
-struct ReservedHandler : public Generator {
-    ReservedHandler(const ast::NodePtr &ptr) : Generator(ptr) {}
-    virtual void generate();
-    void checkSymbols(ast::NodePtr parent, ast::NodePtr node, int position);
+    ast::LiteralNodePtr walkTree(const ast::NodePtr ptr);
+    std::shared_ptr<env::Symbol> handleRunner(ast::NodePtr ptr);
 };
 }
 

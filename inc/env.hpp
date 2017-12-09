@@ -7,24 +7,36 @@
 
 namespace env {
 
+enum class SymbolType : uint8_t {
+    CONST = 0,
+    FUNC = 1,
+    NIL = 2,
+};
+
 class Symbol {
     ast::NodePtr val;
 public:
-    Symbol() : val(nullptr) { }
-    Symbol(ast::NodePtr node) : val(node) { }
-    void print(std::ostream &out) {
+    SymbolType type;
+    Symbol() : val(nullptr), type(SymbolType::NIL) { }
+    Symbol(ast::NodePtr node, SymbolType stype) : val(node), type(stype) { }
+    virtual void print(std::ostream &out) {
         val.get()->print(out);
     }
 };
+
+typedef std::shared_ptr<Symbol> SymbolPtr;
 
 class Applicable : public Symbol {
     using funcType = std::function<ast::LiteralNode(std::vector<ast::LiteralNode> &)>;
     funcType method;
 public:
-    Applicable(funcType func) : Symbol(nullptr) { 
+    Applicable(funcType func) : Symbol(nullptr, SymbolType::FUNC) { 
         method = func;
     }
     ast::LiteralNode apply(std::vector<ast::LiteralNode> &deps) const;
+    void print(std::ostream &out) {
+        out << "func" << std::endl;
+    }
 };
 
 class Value {
@@ -33,13 +45,13 @@ class Value {
 
 class Environment {
     Environment *parent;
-    std::unordered_map<std::string, Symbol> symbols;
+    std::unordered_map<std::string, SymbolPtr> symbols;
 public:
     Environment() : parent(nullptr) {}
     Environment(Environment *outer) : parent(outer) {}
-    void addSymbol(std::string key, Symbol symbol);
+    void addSymbol(std::string key, SymbolPtr symbol);
     const Environment *findSymbol(const std::string &key) const;
-    const Symbol &getSymbol(const std::string &key) const;
+    SymbolPtr getSymbol(const std::string &key) const;
     void print(std::ostream &out) const;
 };
 

@@ -179,11 +179,11 @@ void yyerror(const char *str)
     fprintf(stderr, "error %s\n", str);
 }
 
-env::SafeEnv buildGlobalEnv()
+env::EnvironmentPtr buildGlobalEnv()
 {
     auto global = std::make_shared<env::Environment>();
-    global->addSymbol("+", env::Applicable(depp::proc_add));
-    global->addSymbol("-", env::Applicable(depp::proc_sub));
+    global->addSymbol("+", std::make_shared<env::Applicable>(depp::proc_add));
+    global->addSymbol("-", std::make_shared<env::Applicable>(depp::proc_sub));
     return global;
 }
 
@@ -193,10 +193,8 @@ int main()
     if (program) {
         std::cout << program << std::endl;
         auto env = buildGlobalEnv();
-        gen::ReservedHandler res(program);
-        res.generate();
-        res.dumpEnv(std::cout);
-        std::cout << program << std::endl;
+        gen::Generator res(env, program);
+        res.walkTree(program);
     } else {
         std::cout << "FAILURE: syntax error." << std::endl;
     }
