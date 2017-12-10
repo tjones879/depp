@@ -1,4 +1,5 @@
 #include "inc/generator.hpp"
+#include "inc/builtin.hpp"
 #include "inc/utils.hpp"
 #include <iostream>
 #include <memory>
@@ -36,6 +37,15 @@ void Generator::dumpEnv(std::ostream &out) {
     env->print(out);
 }
 
+ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next) {
+    if (current->token_type == ast::LiteralType::RESERVED)
+        if (std::get<std::string>(current->literal) == "'") {
+            auto list = std::dynamic_pointer_cast<ast::ListNode>(next);
+            return depp::proc_quote(list);
+        }
+    return ast::LiteralNode(ast::LiteralType::NIL, false);
+}
+
 ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
     auto runner = ptr->children[0];
     auto sym = handleRunner(runner);
@@ -43,16 +53,26 @@ ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
 
     if (sym && sym->type == env::SymbolType::FUNC) {
         auto deps = std::vector<ast::LiteralNode>();
-        for (auto child : depp::offset(ptr->children, 1)) {
-            std::cout << "walkTree:" << child << std::endl;
-            switch (child->type()) {
+        for (auto child = ptr->children.begin() + 1; child < ptr->children.end(); child++) {
+            std::cout << "walkTree:" << *child << std::endl;
+            switch ((*child)->type()) {
             case ast::NodeType::LIST:
             case ast::NodeType::VECTOR:
-                deps.push_back(*walkTree(child));
+                deps.push_back(*walkTree(*child));
                 break;
-            case ast::NodeType::LITERAL:
-                deps.push_back(*std::dynamic_pointer_cast<ast::LiteralNode>(child));
+            case ast::NodeType::LITERAL: {
+                auto current = std::dynamic_pointer_cast<ast::LiteralNode>(*child);
+                auto quoted = checkQuote(current, child[1]);
+                if (quoted.token_type != ast::LiteralType::NIL) {
+                    deps.push_back(quoted);
+                    std::cout << "QUOTED:" << std::endl;
+                    quoted.print(std::cout);
+                    child++;
+                } else {
+                    deps.push_back(*current);
+                }
                 break;
+            }
             default:
                 break;
             }

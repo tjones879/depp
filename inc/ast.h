@@ -10,7 +10,9 @@
 namespace ast
 {
 class ListNode;
-typedef std::variant<int, double, bool, std::string, ListNode> LiteralVariant;
+class LiteralNode;
+
+typedef std::variant<int, double, bool, std::string, std::vector<LiteralNode>> LiteralVariant;
 
 template <class E>
 struct enumToString {
@@ -133,6 +135,8 @@ public:
     LiteralType token_type;
     LiteralVariant literal;
     LiteralNode(LiteralType type, LiteralVariant literal);
+    LiteralNode(ListNodePtr list);
+    LiteralNode(std::vector<LiteralNode> vec);
     NodeType type() const;
     void print(std::ostream &out) const;
 };

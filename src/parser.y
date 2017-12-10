@@ -179,11 +179,21 @@ void yyerror(const char *str)
     fprintf(stderr, "error %s\n", str);
 }
 
+std::shared_ptr<env::Applicable> copyApplicable(std::function<ast::LiteralNode(std::vector<ast::LiteralNode> &)> app)
+{
+    return std::make_shared<env::Applicable>(app);
+}
+
 env::EnvironmentPtr buildGlobalEnv()
 {
     auto global = std::make_shared<env::Environment>();
-    global->addSymbol("+", std::make_shared<env::Applicable>(depp::proc_add));
-    global->addSymbol("-", std::make_shared<env::Applicable>(depp::proc_sub));
+    global->addSymbol("+", copyApplicable(depp::proc_add));
+    global->addSymbol("-", copyApplicable(depp::proc_sub));
+    global->addSymbol("*", copyApplicable(depp::proc_mult));
+    global->addSymbol("/", copyApplicable(depp::proc_div));
+    global->addSymbol("null", copyApplicable(depp::proc_null));
+    global->addSymbol("car", copyApplicable(depp::proc_car));
+    global->addSymbol("cdr", copyApplicable(depp::proc_cdr));
     return global;
 }
 
@@ -191,7 +201,6 @@ int main()
 {
     yyparse();
     if (program) {
-        std::cout << program << std::endl;
         auto env = buildGlobalEnv();
         gen::Generator res(env, program);
         res.walkTree(program);

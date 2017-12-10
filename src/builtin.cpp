@@ -1,4 +1,5 @@
 #include "inc/builtin.hpp"
+#include "inc/utils.hpp"
 #include "inc/ast.h"
 #include "inc/env.hpp"
 #include <vector>
@@ -274,19 +275,28 @@ ast::LiteralNode proc_div(std::vector<ast::LiteralNode> &deps)
 }
 
 ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps) {
-    if (deps.size() < 1)
+    if (deps.size() < 1) {
         throw ArgLengthException();
+    } else if (deps.size() == 1 && deps[0].token_type == ast::LiteralType::LIST) {
+        auto list = std::get<std::vector<ast::LiteralNode>>(deps[0].literal);
+        return list[0];
+    }
 
     return deps[0];
 }
 
-std::vector<ast::LiteralNode> proc_cdr(std::vector<ast::LiteralNode> &deps) {
+ast::LiteralNode proc_cdr(std::vector<ast::LiteralNode> &deps) {
     if (deps.size() < 1)
         throw ArgLengthException();
+    // Construct a new literal list node with the contents of deps
+    auto list = std::make_shared<ast::ListNode>();
+    for (auto node : offset(deps, 1))
+        list->children.push_back(std::make_shared<ast::LiteralNode>(node));
 
-    return std::vector<ast::LiteralNode>(deps.begin() + 1, deps.end());
+    return ast::LiteralNode(list);
 }
 
+/*
 ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
     auto first = deps.begin()->literal;
     bool eq = std::all_of(deps.begin() + 1, deps.end(),
@@ -305,14 +315,15 @@ ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
                 });
     return ast::LiteralNode(ast::LiteralType::BOOL, eq);
 }
+*/
 
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps) {
     bool null = deps.size() < 1;
     return ast::LiteralNode(ast::LiteralType::BOOL, null);
 }
 
-ast::LiteralNode proc_quote(ast::ListNode &list) {
-    return ast::LiteralNode(ast::LiteralType::LIST, list);
+ast::LiteralNode proc_quote(ast::ListNodePtr list) {
+    return ast::LiteralNode(list);
 }
 
 void proc_def(std::shared_ptr<env::Environment> enviro, std::vector<ast::LiteralNodePtr> &deps) {

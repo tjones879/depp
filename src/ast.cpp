@@ -78,6 +78,21 @@ LiteralNode::LiteralNode(LiteralType type, LiteralVariant literal) {
     this->literal = literal;
 }
 
+LiteralNode::LiteralNode(ListNodePtr list) : token_type(LiteralType::LIST) {
+    using LiteralList = std::vector<LiteralNode>;
+
+    literal = LiteralList();
+    for (auto child : list->children) {
+        if (child->type() == NodeType::LITERAL) {
+            auto literalNode = std::dynamic_pointer_cast<LiteralNode>(child);
+            std::get<LiteralList>(literal).push_back(*literalNode);
+        } else if (child->type() == NodeType::LIST) {
+            auto literalNode = LiteralNode(std::dynamic_pointer_cast<ListNode>(child));
+            std::get<LiteralList>(literal).push_back(literalNode);
+        }
+    }
+}
+
 NodeType LiteralNode::type() const {
     return (NodeType::LITERAL);
 }
@@ -85,7 +100,12 @@ NodeType LiteralNode::type() const {
 void LiteralNode::print(std::ostream &out) const {
     out << "literal type= " << static_cast<std::string>(literalTypeToStr()(token_type));
     std::visit(overloaded {
-                    [&out](const ListNode &arg) { out << ", literal list val="; arg.print(out); out << std::endl;},
+                    [&out](const std::vector<LiteralNode> &arg) {
+                        out << ", literal list val=";
+                        for (auto elem : arg)
+                            elem.print(out);
+                        out << std::endl;
+                    },
                     [&out](auto &arg) { out << ", literal val=" << arg << std::endl;}},
                literal);
     printChildren(out, children, std::string("    literal"));
