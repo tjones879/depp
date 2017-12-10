@@ -17,7 +17,10 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr) {
         switch(runner->token_type) {
         case ast::LiteralType::IDENT:
         case ast::LiteralType::RESERVED:
-            sym = env->getSymbol(std::get<std::string>(runner->literal));
+            if (std::get<std::string>(runner->literal) == "def")
+                sym = std::make_shared<env::Applicable>(env::buildDef(env, depp::proc_def));
+            else
+                sym = env->getSymbol(std::get<std::string>(runner->literal));
             break;
         default:
             break;
@@ -54,7 +57,6 @@ ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
     if (sym && sym->type == env::SymbolType::FUNC) {
         auto deps = std::vector<ast::LiteralNode>();
         for (auto child = ptr->children.begin() + 1; child < ptr->children.end(); child++) {
-            std::cout << "walkTree:" << *child << std::endl;
             switch ((*child)->type()) {
             case ast::NodeType::LIST:
             case ast::NodeType::VECTOR:
@@ -65,7 +67,6 @@ ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
                 auto quoted = checkQuote(current, child[1]);
                 if (quoted.token_type != ast::LiteralType::NIL) {
                     deps.push_back(quoted);
-                    std::cout << "QUOTED:" << std::endl;
                     quoted.print(std::cout);
                     child++;
                 } else {

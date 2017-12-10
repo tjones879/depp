@@ -34,5 +34,12 @@ void Environment::print(std::ostream &out) const {
     }
 }
 
+Applicable buildDef(std::shared_ptr<Environment> env,
+        std::function<ast::LiteralNode(std::shared_ptr<Environment>, std::vector<ast::LiteralNode> &)> def)
+{
+    using namespace std::placeholders;
+    auto f1 = std::bind(def, env, _1);
+    return Applicable(f1);
+}
 
 }

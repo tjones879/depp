@@ -328,12 +328,14 @@ ast::LiteralNode proc_quote(ast::ListNodePtr list) {
     return ast::LiteralNode(list);
 }
 
-void proc_def(std::shared_ptr<env::Environment> enviro, std::vector<ast::LiteralNodePtr> &deps) {
+ast::LiteralNode proc_def(std::shared_ptr<env::Environment> env, std::vector<ast::LiteralNode> &deps) {
     if (deps.size() == 2) {
-        if (deps[0]->token_type != ast::LiteralType::IDENT)
+        if (deps[0].token_type != ast::LiteralType::IDENT)
             throw TypeMismatchException();
-        auto tok = std::get<std::string>(deps[0]->literal);
-        enviro->addSymbol(tok, std::make_shared<env::Symbol>(deps[1], env::SymbolType::CONST));
+
+        auto tok = std::get<std::string>(deps[0].literal);
+        env->addSymbol(tok, std::make_shared<env::Symbol>(std::make_shared<ast::LiteralNode>(deps[1]), env::SymbolType::CONST));
     }
+    return deps[1];
 }
 }; // namespace depp

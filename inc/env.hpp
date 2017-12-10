@@ -14,11 +14,14 @@ enum class SymbolType : uint8_t {
 };
 
 class Symbol {
-    ast::NodePtr val;
+    ast::LiteralNodePtr val;
 public:
     SymbolType type;
     Symbol() : val(nullptr), type(SymbolType::NIL) { }
-    Symbol(ast::NodePtr node, SymbolType stype) : val(node), type(stype) { }
+    Symbol(ast::LiteralNodePtr node, SymbolType stype) : val(node), type(stype) { }
+    ast::LiteralNodePtr getVal() {
+        return val;
+    }
     virtual void print(std::ostream &out) {
         val.get()->print(out);
     }
@@ -58,6 +61,8 @@ public:
 typedef std::shared_ptr<Environment> EnvironmentPtr;
 typedef std::shared_ptr<const Environment> SafeEnv;
 
+Applicable buildDef(std::shared_ptr<Environment> env,
+        std::function<ast::LiteralNode(std::shared_ptr<Environment>, std::vector<ast::LiteralNode> &)> def);
 }
 
 #endif
