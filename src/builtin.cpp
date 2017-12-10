@@ -286,12 +286,14 @@ ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps) {
 }
 
 ast::LiteralNode proc_cdr(std::vector<ast::LiteralNode> &deps) {
+    auto list = std::vector<ast::LiteralNode>();
     if (deps.size() < 1)
         throw ArgLengthException();
-    // Construct a new literal list node with the contents of deps
-    auto list = std::make_shared<ast::ListNode>();
-    for (auto node : offset(deps, 1))
-        list->children.push_back(std::make_shared<ast::LiteralNode>(node));
+    else if (deps.size() == 1) {
+        auto contents = std::get<std::vector<ast::LiteralNode>>(deps[0].literal);
+        for (auto node : offset(contents, 1))
+            list.push_back(ast::LiteralNode(node));
+    }
 
     return ast::LiteralNode(list);
 }

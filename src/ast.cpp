@@ -93,6 +93,9 @@ LiteralNode::LiteralNode(ListNodePtr list) : token_type(LiteralType::LIST) {
     }
 }
 
+LiteralNode::LiteralNode(std::vector<LiteralNode> vec)
+    : token_type(LiteralType::LIST), literal(vec) { }
+
 NodeType LiteralNode::type() const {
     return (NodeType::LITERAL);
 }
