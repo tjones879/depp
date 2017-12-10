@@ -70,7 +70,7 @@ SYMBOL "-"|"+"|"/"|"*"|"<"|">"|"="|"!"|"@"|"#"|"$"|"%"|"^"|"&"
         return BOOL;
     }
 
-(def|fn|defn|if|while|when|do|lambda|quote|"'"|{SYMBOL}) {
+(def|fn|defun|if|while|when|do|lambda|cons|atom|quote|"'"|{SYMBOL}) {
         yylval = ast::node(ast::LiteralType::RESERVED, std::string(yytext));
         #if DEBUG_SCANNER
         std::cout << "lexed " << yytext << " as RESERVED: " << yylval;

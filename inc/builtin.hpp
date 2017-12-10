@@ -15,6 +15,7 @@ ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps); // WORKING
 
 ast::LiteralNode proc_cdr(std::vector<ast::LiteralNode> &deps); // WORKING
 ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps); // NOT WORKING
+ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps);
 
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps); // WORKING
 

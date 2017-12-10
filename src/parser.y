@@ -194,6 +194,7 @@ env::EnvironmentPtr buildGlobalEnv()
     global->addSymbol("null", copyApplicable(depp::proc_null));
     global->addSymbol("car", copyApplicable(depp::proc_car));
     global->addSymbol("cdr", copyApplicable(depp::proc_cdr));
+    global->addSymbol("atom", copyApplicable(depp::proc_atom));
     return global;
 }
 

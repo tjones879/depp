@@ -319,6 +319,15 @@ ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
 }
 */
 
+ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps) {
+    bool atom = true;
+    if (deps.size() > 0)
+        if (deps[0].token_type == ast::LiteralType::LIST || deps[0].token_type == ast::LiteralType::NIL)
+            atom = false;
+
+    return ast::LiteralNode(ast::LiteralType::BOOL, atom);
+}
+
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps) {
     bool null = deps.size() < 1;
     return ast::LiteralNode(ast::LiteralType::BOOL, null);
