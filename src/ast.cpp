@@ -114,6 +114,24 @@ void LiteralNode::print(std::ostream &out) const {
     printChildren(out, children, std::string("    literal"));
 }
 
+bool LiteralNode::operator==(const LiteralNode &other) const {
+    return std::visit([&](auto &arg) -> bool {
+        using T = std::decay_t<decltype(arg)>;
+
+        if (!std::holds_alternative<T>(literal)) {
+            return false;
+        } else {
+            if (std::get<T>(literal) != arg)
+                return false;
+        }
+        return true;
+    }, other.literal);
+}
+
+bool LiteralNode::operator!=(const LiteralNode &other) const {
+    return !(*this == other);
+}
+
 NodePtr node(NodeType type) {
     switch (type) {
     case NodeType::PROGRAM:

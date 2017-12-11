@@ -139,6 +139,8 @@ public:
     LiteralNode(std::vector<LiteralNode> vec);
     NodeType type() const;
     void print(std::ostream &out) const;
+    bool operator==(const LiteralNode &other) const;
+    bool operator!=(const LiteralNode &other) const;
 };
 
 typedef std::shared_ptr<LiteralNode> LiteralNodePtr;

@@ -298,26 +298,14 @@ ast::LiteralNode proc_cdr(std::vector<ast::LiteralNode> &deps) {
     return ast::LiteralNode(list);
 }
 
-/*
 ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps) {
-    auto first = deps.begin()->literal;
+    auto first = *deps.begin();
     bool eq = std::all_of(deps.begin() + 1, deps.end(),
                 [&](ast::LiteralNode &in) -> bool {
-                    return std::visit([&](auto &arg) -> bool {
-                        using T = std::decay_t<decltype(arg)>;
-
-                        if (!std::holds_alternative<T>(first)) {
-                            return false;
-                        } else {
-                            if (std::get<T>(first) != arg)
-                                return false;
-                        }
-                        return true;
-                    }, in.literal);
+                    return in == first;
                 });
     return ast::LiteralNode(ast::LiteralType::BOOL, eq);
 }
-*/
 
 ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps) {
     bool atom = true;
