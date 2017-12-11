@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace gen {
-std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr) {
+std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr, ast::NodePtr parent) {
     std::shared_ptr<env::Symbol> sym;
 
     if (ptr->type() != ast::NodeType::LITERAL)
@@ -16,12 +16,23 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr) {
     if (runner) {
         switch(runner->token_type) {
         case ast::LiteralType::IDENT:
-        case ast::LiteralType::RESERVED:
-            if (std::get<std::string>(runner->literal) == "def")
+        case ast::LiteralType::RESERVED: {
+            auto str = std::get<std::string>(runner->literal);
+            if (str == "def") {
                 sym = std::make_shared<env::Applicable>(env::buildDef(env, depp::proc_def));
-            else
+            } else if (str == "defun") {
+                env::defun f =
+                    [](env::EnvironmentPtr env, ast::LiteralNode args, ast::NodePtr parent) -> ast::LiteralNode {
+                        // We must capture the environment where this function was defined.
+                        auto gen = Generator(env, parent);
+                        return ast::LiteralNode(ast::LiteralType::NIL, false);
+                    };
+                sym = std::make_shared<env::Applicable>(env::buildFunc(env, parent, f));
+            } else {
                 sym = env->getSymbol(std::get<std::string>(runner->literal));
+            }
             break;
+        }
         default:
             break;
         }
@@ -51,7 +62,7 @@ ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next) {
 
 ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
     auto runner = ptr->children[0];
-    auto sym = handleRunner(runner);
+    auto sym = handleRunner(runner, ptr);
     ast::LiteralNode ret(ast::LiteralNode(ast::LiteralType::NIL, false));
 
     if (sym && sym->type == env::SymbolType::FUNC) {

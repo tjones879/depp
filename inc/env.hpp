@@ -63,6 +63,11 @@ typedef std::shared_ptr<const Environment> SafeEnv;
 
 Applicable buildDef(std::shared_ptr<Environment> env,
         std::function<ast::LiteralNode(std::shared_ptr<Environment>, std::vector<ast::LiteralNode> &)> def);
+
+using defun = std::function<ast::LiteralNode(std::shared_ptr<Environment>, ast::LiteralNode args, ast::NodePtr subtree)>;
+
+Applicable buildFunc(std::shared_ptr<Environment> env, ast::NodePtr root, defun func);
+
 }
 
 #endif

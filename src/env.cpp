@@ -42,4 +42,15 @@ Applicable buildDef(std::shared_ptr<Environment> env,
     return Applicable(f1);
 }
 
+Applicable buildFunc(std::shared_ptr<Environment> env,
+        ast::NodePtr root,
+        std::function<ast::LiteralNode(std::shared_ptr<Environment>,
+                                       ast::LiteralNode,
+                                       ast::NodePtr)> func)
+{
+    using namespace std::placeholders;
+    auto f1 = std::bind(func, env, _1, root);
+    return Applicable(f1);
+}
+
 }
