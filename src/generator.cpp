@@ -25,7 +25,12 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr, ast::Node
                     [](env::EnvironmentPtr env, ast::LiteralNode args, ast::NodePtr parent) -> ast::LiteralNode {
                         // We must capture the environment where this function was defined.
                         auto gen = Generator(env, parent);
-                        return ast::LiteralNode(ast::LiteralType::NIL, false);
+                        auto requiredArgs = parent->children[1];
+                        auto passedArgs = std::get<std::vector<ast::LiteralNode>>(args.literal);
+                        if (passedArgs.size() != requiredArgs->children.size())
+                            throw depp::ArgLengthException();
+                        // The actual executable code will always be in the third subtree.
+                        return *gen.walkTree(parent->children[2]);
                     };
                 sym = std::make_shared<env::Applicable>(env::buildFunc(env, parent, f));
             } else {

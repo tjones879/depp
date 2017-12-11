@@ -11,18 +11,6 @@
 
 namespace depp {
 
-class TypeMismatchException : public std::runtime_error {
-public:
-    TypeMismatchException() : runtime_error("There were different types.") {}
-    TypeMismatchException(std::string msg) : runtime_error(msg.c_str()) {}
-};
-
-class ArgLengthException : public std::runtime_error {
-public:
-    ArgLengthException() : runtime_error("There were different types.") {}
-    ArgLengthException(std::string msg) : runtime_error(msg.c_str()) {}
-};
-
 template <class F, class G>
 auto compose(F f, G g) {
     return [f, g](auto x){ return f(g(x)); };
