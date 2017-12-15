@@ -7,6 +7,7 @@
 #include <numeric>
 #include <string>
 #include <type_traits>
+#include <utility>
 #include <vector>
 
 namespace depp {
@@ -30,7 +31,7 @@ auto compose(F f, Fs &&... fs)
 }
 
 template <class T, class C>
-auto foldLiterals(const std::vector<ast::LiteralNode> &deps, C composition)
+auto foldLiterals(const std::vector<ast::LiteralNode> &deps, C  /*composition*/)
 {
     ast::LiteralNode result = ast::LiteralNode(ast::LiteralType::NIL, false);
     std::for_each(deps.begin(), deps.end(),
@@ -277,7 +278,7 @@ ast::LiteralNode proc_div(std::vector<ast::LiteralNode> &deps)
 
 ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps)
 {
-    if (deps.size() < 1) {
+    if (deps.empty()) {
         throw ArgLengthException();
     } else if (deps.size() == 1
         && deps[0].token_type == ast::LiteralType::LIST) {
@@ -291,13 +292,13 @@ ast::LiteralNode proc_car(std::vector<ast::LiteralNode> &deps)
 ast::LiteralNode proc_cdr(std::vector<ast::LiteralNode> &deps)
 {
     auto list = std::vector<ast::LiteralNode>();
-    if (deps.size() < 1)
+    if (deps.empty())
         throw ArgLengthException();
     else if (deps.size() == 1) {
         auto contents = std::get<std::vector<ast::LiteralNode>>(
             deps[0].literal);
-        for (auto node : offset(contents, 1))
-            list.push_back(ast::LiteralNode(node));
+        for (const auto& node : offset(contents, 1))
+            list.emplace_back(node);
     }
 
     return ast::LiteralNode(list);
@@ -314,7 +315,7 @@ ast::LiteralNode proc_eq(std::vector<ast::LiteralNode> &deps)
 ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps)
 {
     bool atom = true;
-    if (deps.size() > 0)
+    if (!deps.empty())
         if (deps[0].token_type == ast::LiteralType::LIST
             || deps[0].token_type == ast::LiteralType::NIL)
             atom = false;
@@ -324,17 +325,17 @@ ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps)
 
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps)
 {
-    bool null = deps.size() < 1;
+    bool null = deps.empty();
     return ast::LiteralNode(ast::LiteralType::BOOL, null);
 }
 
 ast::LiteralNode proc_quote(ast::ListNodePtr list)
 {
-    return ast::LiteralNode(list);
+    return ast::LiteralNode(std::move(list));
 }
 
 ast::LiteralNode proc_def(
-    std::shared_ptr<env::Environment> env, std::vector<ast::LiteralNode> &deps)
+    const std::shared_ptr<env::Environment>& env, std::vector<ast::LiteralNode> &deps)
 {
     if (deps.size() == 2) {
         if (deps[0].token_type != ast::LiteralType::IDENT)

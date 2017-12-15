@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "inc/env.hpp"
 
 namespace env {
@@ -7,10 +9,10 @@ ast::LiteralNode Applicable::apply(std::vector<ast::LiteralNode> &deps) const
     return method(deps);
 }
 
-void Environment::addSymbol(std::string key, SymbolPtr symbol)
+void Environment::addSymbol(const std::string& key, SymbolPtr symbol)
 {
     if (symbols.find(key) == symbols.end())
-        symbols[key] = symbol;
+        symbols[key] = std::move(symbol);
 }
 
 const Environment *Environment::findSymbol(const std::string &key) const
@@ -21,7 +23,7 @@ const Environment *Environment::findSymbol(const std::string &key) const
             ret = env;
 
         env = env->parent;
-    } while (!ret && env);
+    } while ((ret == nullptr) && (env != nullptr));
     return ret;
 }
 
@@ -58,4 +60,4 @@ Applicable buildFunc(std::shared_ptr<Environment> env, ast::NodePtr root,
     auto f1 = std::bind(func, env, _1, root);
     return Applicable(f1);
 }
-}
+} // namespace env

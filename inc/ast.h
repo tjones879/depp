@@ -137,7 +137,7 @@ public:
     LiteralType token_type;
     LiteralVariant literal;
     LiteralNode(LiteralType type, LiteralVariant literal);
-    LiteralNode(ListNodePtr list);
+    LiteralNode(const ListNodePtr& list);
     LiteralNode(std::vector<LiteralNode> vec);
     NodeType type() const;
     void print(std::ostream &out) const;

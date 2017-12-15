@@ -44,7 +44,7 @@ ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps);
 
 ast::LiteralNode proc_quote(ast::ListNodePtr list);
 ast::LiteralNode proc_def(
-    std::shared_ptr<env::Environment> env, std::vector<ast::LiteralNode> &deps);
+    const std::shared_ptr<env::Environment>& env, std::vector<ast::LiteralNode> &deps);
 }
 
 #endif

@@ -3,6 +3,8 @@
 #include "inc/utils.hpp"
 #include <iostream>
 #include <memory>
+#include <utility>
+#include <utility>
 #include <vector>
 
 namespace gen {
@@ -52,7 +54,7 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(
                     return *gen.walkTree(parent->children[3]);
                 };
                 sym = std::make_shared<env::Applicable>(
-                    env::buildFunc(env, parent, f));
+                    env::buildFunc(env, std::move(parent), f));
             } else {
                 sym = env->getSymbol(std::get<std::string>(runner->literal));
             }
@@ -65,15 +67,15 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(
     return sym;
 }
 
-Generator::Generator(const ast::NodePtr ptr)
+Generator::Generator(const ast::NodePtr& ptr)
 {
     env = std::make_shared<env::Environment>();
     ast = ptr;
 }
 
-Generator::Generator(env::EnvironmentPtr en, const ast::NodePtr &ptr)
-    : env(en)
-    , ast(ptr)
+Generator::Generator(env::EnvironmentPtr en, ast::NodePtr ptr)
+    : env(std::move(std::move(en)))
+    , ast(std::move(ptr))
 {
 }
 
@@ -82,7 +84,7 @@ void Generator::dumpEnv(std::ostream &out)
     env->print(out);
 }
 
-ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next)
+ast::LiteralNode checkQuote(const ast::LiteralNodePtr& current, const ast::NodePtr& next)
 {
     if (current->token_type == ast::LiteralType::RESERVED)
         if (std::get<std::string>(current->literal) == "'") {
@@ -92,7 +94,7 @@ ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next)
     return ast::LiteralNode(ast::LiteralType::NIL, false);
 }
 
-ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr)
+ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr& ptr)
 {
     auto runner = ptr->children[0];
     auto sym = handleRunner(runner, ptr);
@@ -132,4 +134,4 @@ ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr)
 
     return std::make_shared<ast::LiteralNode>(ret);
 }
-}
+} // namespace gen

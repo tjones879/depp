@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "inc/ast.h"
 
 namespace ast {
@@ -10,9 +12,9 @@ overloaded(Ts...)->overloaded<Ts...>;
 
 template <class T>
 void printChildren(
-    std::ostream &out, std::vector<T> children, std::string prefix)
+    std::ostream &out, std::vector<T> children, const std::string &prefix)
 {
-    for (auto node : children)
+    for (const auto &node : children)
         out << prefix << "child: " << node << std::endl;
 }
 
@@ -94,16 +96,16 @@ void MapNode::print(std::ostream &out) const
 LiteralNode::LiteralNode(LiteralType type, LiteralVariant literal)
 {
     this->token_type = type;
-    this->literal = literal;
+    this->literal = std::move(literal);
 }
 
-LiteralNode::LiteralNode(ListNodePtr list)
+LiteralNode::LiteralNode(const ListNodePtr& list)
     : token_type(LiteralType::LIST)
 {
     using LiteralList = std::vector<LiteralNode>;
 
     literal = LiteralList();
-    for (auto child : list->children) {
+    for (const auto& child : list->children) {
         if (child->type() == NodeType::LITERAL) {
             auto literalNode = std::dynamic_pointer_cast<LiteralNode>(child);
             std::get<LiteralList>(literal).push_back(*literalNode);
@@ -132,7 +134,7 @@ void LiteralNode::print(std::ostream &out) const
         << static_cast<std::string>(literalTypeToStr()(token_type));
     std::visit(overloaded{ [&out](const std::vector<LiteralNode> &arg) {
                               out << ", literal list val=";
-                              for (auto elem : arg)
+                              for (const auto& elem : arg)
                                   elem.print(out);
                               out << std::endl;
                           },
@@ -181,14 +183,14 @@ NodePtr node(NodeType type)
         return NodePtr(new MapNode());
         break;
     default:
-        return NULL;
+        return nullptr;
         break;
     }
 }
 
 NodePtr node(LiteralType type, LiteralVariant literal)
 {
-    return NodePtr(new LiteralNode(type, literal));
+    return NodePtr(new LiteralNode(type, std::move(literal)));
 }
 
 std::ostream &operator<<(std::ostream &out, const NodePtr &p)

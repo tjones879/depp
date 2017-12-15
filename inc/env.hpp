@@ -75,7 +75,7 @@ public:
         : parent(outer)
     {
     }
-    void addSymbol(std::string key, SymbolPtr symbol);
+    void addSymbol(const std::string& key, SymbolPtr symbol);
     const Environment *findSymbol(const std::string &key) const;
     SymbolPtr getSymbol(const std::string &key) const;
     void print(std::ostream &out) const;
