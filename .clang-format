@@ -1,0 +1,13 @@
+---
+Language: Cpp
+BasedOnStyle: Webkit
+
+AlignTrailingComments: true
+ColumnLimit: 80
+IndentWidth: 4
+PointerAlignment: Right
+SpaceAfterCStyleCast: true
+AlwaysBreakTemplateDeclarations: true
+AllowShortBlocksOnASingleLine: false
+PenaltyBreakAssignment: 5000
+AllowShortFunctionsOnASingleLine: Empty
