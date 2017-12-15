@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.2)
 project (depp)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -12,3 +12,13 @@ include_directories(${CMAKE_SOURCE_DIR}/)
 include_directories(${CMAKE_SOURCE_DIR}/gen/)
 add_subdirectory(src)
 add_subdirectory(test)
+
+# MISC targets
+file(GLOB_RECURSE ALL_SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE ALL_HEADER_FILES inc/*.hpp inc/*.h)
+
+find_program(FORMAT_PATH clang-format)
+if(FORMAT_PATH)
+    add_custom_target(format
+        COMMAND ${FORMAT_PATH} -i ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES})
+endif()

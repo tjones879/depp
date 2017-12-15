@@ -13,7 +13,8 @@ struct Generator {
     Generator(env::EnvironmentPtr en, const ast::NodePtr &ptr);
     void dumpEnv(std::ostream &out);
     ast::LiteralNodePtr walkTree(const ast::NodePtr ptr);
-    std::shared_ptr<env::Symbol> handleRunner(ast::NodePtr ptr, ast::NodePtr parent);
+    std::shared_ptr<env::Symbol> handleRunner(
+        ast::NodePtr ptr, ast::NodePtr parent);
 };
 }
 

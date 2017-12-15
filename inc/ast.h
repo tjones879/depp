@@ -1,23 +1,23 @@
 #ifndef AST_H
 #define AST_H
 
-#include <vector>
-#include <variant>
-#include <string>
 #include <iostream>
 #include <memory>
+#include <string>
+#include <variant>
+#include <vector>
 
-namespace ast
-{
+namespace ast {
 class ListNode;
 class LiteralNode;
 
-typedef std::variant<int, double, bool, std::string, std::vector<LiteralNode>> LiteralVariant;
+typedef std::variant<int, double, bool, std::string, std::vector<LiteralNode>>
+    LiteralVariant;
 
 template <class E>
 struct enumToString {
     enumToString() {}
-    virtual std::string operator() (E val)=0;
+    virtual std::string operator()(E val) = 0;
 };
 
 template <class E>
@@ -26,19 +26,20 @@ private:
     const E type;
     enumToString<E> converter;
     E strToType(const std::string &str);
+
 public:
-    TypeConverter(E t, enumToString<E> ets) : type(t), converter(ets) {}
-    std::string operator() () { return converter(type); }
+    TypeConverter(E t, enumToString<E> ets)
+        : type(t)
+        , converter(ets)
+    {
+    }
+    std::string operator()()
+    {
+        return converter(type);
+    }
 };
 
-enum class NodeType : int {
-    PROGRAM,
-    ATOMS,
-    LIST,
-    VECTOR,
-    MAP,
-    LITERAL
-};
+enum class NodeType : int { PROGRAM, ATOMS, LIST, VECTOR, MAP, LITERAL };
 
 enum class LiteralType : int {
     BOOL,
@@ -53,26 +54,27 @@ enum class LiteralType : int {
 };
 
 struct literalTypeToStr : enumToString<LiteralType> {
-    virtual std::string operator() (LiteralType val) {
+    virtual std::string operator()(LiteralType val)
+    {
         switch (val) {
-            case LiteralType::BOOL:
-                return "BOOL";
-            case LiteralType::NIL:
-                return "NIL";
-            case LiteralType::STRING:
-                return "STRING";
-            case LiteralType::REAL:
-                return "REAL";
-            case LiteralType::INTEGER:
-                return "INTEGER";
-            case LiteralType::IDENT:
-                return "IDENT";
-            case LiteralType::KEYWORD:
-                return "KEYWORD";
-            case LiteralType::RESERVED:
-                return "RESERVED";
-            case LiteralType::LIST:
-                return "LIST";
+        case LiteralType::BOOL:
+            return "BOOL";
+        case LiteralType::NIL:
+            return "NIL";
+        case LiteralType::STRING:
+            return "STRING";
+        case LiteralType::REAL:
+            return "REAL";
+        case LiteralType::INTEGER:
+            return "INTEGER";
+        case LiteralType::IDENT:
+            return "IDENT";
+        case LiteralType::KEYWORD:
+            return "KEYWORD";
+        case LiteralType::RESERVED:
+            return "RESERVED";
+        case LiteralType::LIST:
+            return "LIST";
         }
     }
 };
@@ -83,7 +85,7 @@ public:
 
     virtual NodeType type() const = 0;
     virtual void print(std::ostream &out) const = 0;
-    virtual ~Node() {};
+    virtual ~Node(){};
 };
 
 typedef std::shared_ptr<Node> NodePtr;

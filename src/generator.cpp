@@ -6,7 +6,9 @@
 #include <vector>
 
 namespace gen {
-std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr, ast::NodePtr parent) {
+std::shared_ptr<env::Symbol> Generator::handleRunner(
+    ast::NodePtr ptr, ast::NodePtr parent)
+{
     std::shared_ptr<env::Symbol> sym;
 
     if (ptr->type() != ast::NodeType::LITERAL)
@@ -14,36 +16,43 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr, ast::Node
 
     auto runner = std::dynamic_pointer_cast<ast::LiteralNode>(ptr);
     if (runner) {
-        switch(runner->token_type) {
+        switch (runner->token_type) {
         case ast::LiteralType::IDENT:
         case ast::LiteralType::RESERVED: {
             auto str = std::get<std::string>(runner->literal);
             if (str == "def") {
-                sym = std::make_shared<env::Applicable>(env::buildDef(env, depp::proc_def));
+                sym = std::make_shared<env::Applicable>(
+                    env::buildDef(env, depp::proc_def));
             } else if (str == "defun") {
-                env::defun f =
-                    [](env::EnvironmentPtr env, ast::LiteralNode args, ast::NodePtr parent) -> ast::LiteralNode {
-                        // We must capture the environment where this function was defined.
-                        auto gen = Generator(env, parent);
-                        auto requiredArgs = parent->children[2];
-                        auto passedArgs = std::get<std::vector<ast::LiteralNode>>(args.literal);
-                        if (passedArgs.size() != requiredArgs->children.size())
-                            throw depp::ArgLengthException();
+                env::defun f = [](env::EnvironmentPtr env,
+                                   ast::LiteralNode args,
+                                   ast::NodePtr parent) -> ast::LiteralNode {
+                    // We must capture the environment where this function was
+                    // defined.
+                    auto gen = Generator(env, parent);
+                    auto requiredArgs = parent->children[2];
+                    auto passedArgs = std::get<std::vector<ast::LiteralNode>>(
+                        args.literal);
+                    if (passedArgs.size() != requiredArgs->children.size())
+                        throw depp::ArgLengthException();
 
-                        for (auto it = 0; it < passedArgs.size(); it++) {
-                            auto symbol = std::dynamic_pointer_cast<ast::LiteralNode>(requiredArgs->children[it]);
-                            auto token = std::get<std::string>(symbol->literal);
-                            env->addSymbol(
-                                    token,
-                                    std::make_shared<env::Symbol>(
-                                        std::make_shared<ast::LiteralNode>(passedArgs[it]),
-                                        env::SymbolType::CONST));
-                        }
+                    for (auto it = 0; it < passedArgs.size(); it++) {
+                        auto symbol = std::dynamic_pointer_cast<
+                            ast::LiteralNode>(requiredArgs->children[it]);
+                        auto token = std::get<std::string>(symbol->literal);
+                        env->addSymbol(token,
+                            std::make_shared<env::Symbol>(
+                                std::make_shared<ast::LiteralNode>(
+                                    passedArgs[it]),
+                                env::SymbolType::CONST));
+                    }
 
-                        // The actual executable code will always be in the fourth subtree.
-                        return *gen.walkTree(parent->children[3]);
-                    };
-                sym = std::make_shared<env::Applicable>(env::buildFunc(env, parent, f));
+                    // The actual executable code will always be in the fourth
+                    // subtree.
+                    return *gen.walkTree(parent->children[3]);
+                };
+                sym = std::make_shared<env::Applicable>(
+                    env::buildFunc(env, parent, f));
             } else {
                 sym = env->getSymbol(std::get<std::string>(runner->literal));
             }
@@ -56,18 +65,25 @@ std::shared_ptr<env::Symbol> Generator::handleRunner(ast::NodePtr ptr, ast::Node
     return sym;
 }
 
-Generator::Generator(const ast::NodePtr ptr) {
+Generator::Generator(const ast::NodePtr ptr)
+{
     env = std::make_shared<env::Environment>();
     ast = ptr;
 }
 
-Generator::Generator(env::EnvironmentPtr en, const ast::NodePtr &ptr) : env(en), ast(ptr) { }
+Generator::Generator(env::EnvironmentPtr en, const ast::NodePtr &ptr)
+    : env(en)
+    , ast(ptr)
+{
+}
 
-void Generator::dumpEnv(std::ostream &out) {
+void Generator::dumpEnv(std::ostream &out)
+{
     env->print(out);
 }
 
-ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next) {
+ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next)
+{
     if (current->token_type == ast::LiteralType::RESERVED)
         if (std::get<std::string>(current->literal) == "'") {
             auto list = std::dynamic_pointer_cast<ast::ListNode>(next);
@@ -76,21 +92,24 @@ ast::LiteralNode checkQuote(ast::LiteralNodePtr current, ast::NodePtr next) {
     return ast::LiteralNode(ast::LiteralType::NIL, false);
 }
 
-ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr) {
+ast::LiteralNodePtr Generator::walkTree(const ast::NodePtr ptr)
+{
     auto runner = ptr->children[0];
     auto sym = handleRunner(runner, ptr);
     ast::LiteralNode ret(ast::LiteralNode(ast::LiteralType::NIL, false));
 
     if (sym && sym->type == env::SymbolType::FUNC) {
         auto deps = std::vector<ast::LiteralNode>();
-        for (auto child = ptr->children.begin() + 1; child < ptr->children.end(); child++) {
+        for (auto child = ptr->children.begin() + 1;
+             child < ptr->children.end(); child++) {
             switch ((*child)->type()) {
             case ast::NodeType::LIST:
             case ast::NodeType::VECTOR:
                 deps.push_back(*walkTree(*child));
                 break;
             case ast::NodeType::LITERAL: {
-                auto current = std::dynamic_pointer_cast<ast::LiteralNode>(*child);
+                auto current = std::dynamic_pointer_cast<ast::LiteralNode>(
+                    *child);
                 auto quoted = checkQuote(current, child[1]);
                 if (quoted.token_type != ast::LiteralType::NIL) {
                     deps.push_back(quoted);

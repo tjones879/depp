@@ -8,16 +8,27 @@
 namespace depp {
 class TypeMismatchException : public std::runtime_error {
 public:
-    TypeMismatchException() : runtime_error("There were different types.") {}
-    TypeMismatchException(std::string msg) : runtime_error(msg.c_str()) {}
+    TypeMismatchException()
+        : runtime_error("There were different types.")
+    {
+    }
+    TypeMismatchException(std::string msg)
+        : runtime_error(msg.c_str())
+    {
+    }
 };
 
 class ArgLengthException : public std::runtime_error {
 public:
-    ArgLengthException() : runtime_error("There were different types.") {}
-    ArgLengthException(std::string msg) : runtime_error(msg.c_str()) {}
+    ArgLengthException()
+        : runtime_error("There were different types.")
+    {
+    }
+    ArgLengthException(std::string msg)
+        : runtime_error(msg.c_str())
+    {
+    }
 };
-
 
 ast::LiteralNode proc_add(std::vector<ast::LiteralNode> &deps);
 ast::LiteralNode proc_sub(std::vector<ast::LiteralNode> &deps);
@@ -32,8 +43,8 @@ ast::LiteralNode proc_atom(std::vector<ast::LiteralNode> &deps);
 ast::LiteralNode proc_null(std::vector<ast::LiteralNode> &deps);
 
 ast::LiteralNode proc_quote(ast::ListNodePtr list);
-ast::LiteralNode proc_def(std::shared_ptr<env::Environment> env, std::vector<ast::LiteralNode> &deps);
-
+ast::LiteralNode proc_def(
+    std::shared_ptr<env::Environment> env, std::vector<ast::LiteralNode> &deps);
 }
 
 #endif
